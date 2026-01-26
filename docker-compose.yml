@@ -1,0 +1,23 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+      # 讓 SQLite 資料庫檔案持久化 (就算容器刪掉資料還在)
+      - ./backend_data:/app/data 
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules # 隔離容器內的 node_modules
+    environment:
+      - WATCHPACK_POLLING=true # 確保 Mac 上熱更新順暢
+    depends_on:
+      - backend
