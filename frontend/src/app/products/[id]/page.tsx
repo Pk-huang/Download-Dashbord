@@ -6,16 +6,19 @@ import { getProductById } from '@/lib/mock-data'; // 模擬抓資料
 import { ProductFormValues } from '@/lib/schemas/product-schema';
 
 interface EditProductPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 // 這是 Server Component，所以可以直接 async 抓資料
 export default async function EditProductPage({ params }: EditProductPageProps) {
   // 1. 模擬從後端抓取資料
   // 注意：params.id 對應的是網址上的 ID
-  const product = getProductById(params.id);
+  const { id } = await params; 
+  
+  // 2. 使用解析出來的 id 去抓資料
+  const product = getProductById(id);
 
   // 2. 如果找不到產品，顯示 404
   if (!product) {
@@ -39,18 +42,18 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
   return (
     <div className="p-6 w-full max-w-[1400px] mx-auto bg-slate-50/50 min-h-screen">
-      
+
       {/* 1. Header: 使用 autoBack 自動偵測回上一頁 */}
-      <PageHeader 
+      <PageHeader
         title={`Edit Product: ${product.name}`}
-        autoBack={true} 
+        autoBack={true}
       />
 
       {/* 2. Form: 傳入 initialData，表單會自動填好值 */}
       <div className="max-w-[1200px] mx-auto">
         <ProductForm initialData={initialData} />
       </div>
-      
+
     </div>
   );
 }
