@@ -1,5 +1,10 @@
 // 檔案位置: src/lib/mock-data.ts
+// src/lib/mock-data.ts
 import { Product } from "@/types/product";
+
+// ... (原本的 MOCK_PRODUCTS 陣列保持不變) ...
+
+
 
 export const MOCK_PRODUCTS: Product[] = [
   {
@@ -43,3 +48,10 @@ export const MOCK_PRODUCTS: Product[] = [
     modified_date: "2024/11/11 15:01",
   },
 ];
+
+
+// 新增這個 helper function
+export function getProductById(id: string) {
+  // 這裡之後會變成真實的 API 呼叫
+  return MOCK_PRODUCTS.find(p => p.id === id);
+}

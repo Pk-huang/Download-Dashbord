@@ -41,15 +41,17 @@ export default function ProductListPage() {
     <div className=" w-full px-12 pt-6 bg-white min-h-screen">
 
       {/* 1. 使用共用的 PageHeader */}
-      <PageHeader
-        title="Product List"
-        icon={FileText}
-        secondary_title='Prouduct Page'
-      />
-      <div className="flex justify-end mb-4">
+      <div className="flex items-center justify-between mb-6">
+        <PageHeader
+          title="Product List"
+          icon={FileText}
+          subtitle='Product Page'
+        />
+      </div>
+      <div className="flex justify-end mb-7">
         <Link href="/products/new">
           <Button variant="vsbds_sky" size="vsbds_size">
-            <Plus  />
+            <Plus />
             新增產品
           </Button>
         </Link>
@@ -108,80 +110,80 @@ export default function ProductListPage() {
       </FilterBar>
 
       {/* 3. 表格區域 (Table 比較特殊，通常直接放，或是之後也可以包成 DataTable) */}
-
-      <Table className=' table-auto '>
-        <TableHeader className=" ">
-          <TableRow className='bg-slate-100 '>
-            <TableHead className="font-bold py-5 rounded-tl-xl min-w-[150px]">Name</TableHead>
-            <TableHead className="font-bold py-5">Product Line</TableHead>
-            <TableHead className="font-bold py-5">Series</TableHead>
-            <TableHead className="font-bold py-5">Modified</TableHead>
-            <TableHead className="font-bold py-5 w-[100px]">Date</TableHead>
-            <TableHead className="font-bold py-5 rounded-tr-xl text-center min-w-[100px]">Update</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredProducts.map((product) => (
-            <TableRow key={product.id} className="hover:bg-slate-50 transition-colors">
-              <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
-              <TableCell>{product.product_line}</TableCell>
-              <TableCell>{product.series}</TableCell>
-              <TableCell>{product.modified_by}</TableCell>
-              <TableCell>{product.modified_date}</TableCell>
-              <TableCell className="text-center">
-                <Link href={`/products/${product.id}`}>
-                  <Button variant="ghost" size="icon">
-                    <FileText className="h-4 w-4 text-slate-500 hover:text-blue-600" />
-                  </Button>
-                </Link>
-              </TableCell>
+      <div className='rounded-md overflow-hidden'>
+        <Table className=' table-auto '>
+          <TableHeader className=" ">
+            <TableRow className='bg-slate-100 '>
+              <TableHead className="font-bold py-5  min-w-[150px]">Name</TableHead>
+              <TableHead className="font-bold py-5">Product Line</TableHead>
+              <TableHead className="font-bold py-5">Series</TableHead>
+              <TableHead className="font-bold py-5">Modified</TableHead>
+              <TableHead className="font-bold py-5 w-[100px]">Date</TableHead>
+              <TableHead className="font-bold py-5 text-center min-w-[100px]">Update</TableHead>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+          </TableHeader>
+          <TableBody>
+            {filteredProducts.map((product) => (
+              <TableRow key={product.id} className="hover:bg-slate-50 transition-colors">
+                <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
+                <TableCell>{product.product_line}</TableCell>
+                <TableCell>{product.series}</TableCell>
+                <TableCell>{product.modified_by}</TableCell>
+                <TableCell>{product.modified_date}</TableCell>
+                <TableCell className="text-center">
+                  <Link href={`/products/${product.id}`}>
+                    <Button variant="ghost" size="icon">
+                      <FileText className="h-4 w-4 text-slate-500 hover:text-blue-600" />
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
 
 
-   
-        {/* 4. 分頁元件 Pagination */}
-        <Pagination className="mt-6 justify-end">
-          <PaginationContent>
-            <PaginationPrevious>
-              <PaginationLink size="icon" aria-label="Previous">
-                &lt;
-              </PaginationLink>
-            </PaginationPrevious>
+      {/* 4. 分頁元件 Pagination */}
+      <Pagination className="mt-6 justify-end">
+        <PaginationContent>
+          <PaginationPrevious>
+            <PaginationLink size="icon" aria-label="Previous">
+              &lt;
+            </PaginationLink>
+          </PaginationPrevious>
 
-            <PaginationItem>
-              <PaginationLink size="icon" isActive href="#">
-                1
-              </PaginationLink>
-            </PaginationItem>
+          <PaginationItem>
+            <PaginationLink size="icon" isActive href="#">
+              1
+            </PaginationLink>
+          </PaginationItem>
 
-            <PaginationItem>
-              <PaginationLink size="icon" href="#">
-                2
-              </PaginationLink>
-            </PaginationItem>
+          <PaginationItem>
+            <PaginationLink size="icon" href="#">
+              2
+            </PaginationLink>
+          </PaginationItem>
 
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
 
-            <PaginationItem>
-              <PaginationLink size="icon" href="#">
-                5
-              </PaginationLink>
-            </PaginationItem>
+          <PaginationItem>
+            <PaginationLink size="icon" href="#">
+              5
+            </PaginationLink>
+          </PaginationItem>
 
-            <PaginationNext>
-              <PaginationLink size="icon" aria-label="Next">
-                &gt;
-              </PaginationLink>
-            </PaginationNext>
-          </PaginationContent>
-        </Pagination>
+          <PaginationNext>
+            <PaginationLink size="icon" aria-label="Next">
+              &gt;
+            </PaginationLink>
+          </PaginationNext>
+        </PaginationContent>
+      </Pagination>
 
-   
+
     </div>
   );
 }
