@@ -41,7 +41,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   };
 
   return (
-    <div className="p-6 w-full max-w-[1400px] mx-auto bg-slate-50/50 min-h-screen">
+    <div className="w-full px-12 pt-6 bg-white min-h-screen">
 
       {/* 1. Header: 使用 autoBack 自動偵測回上一頁 */}
       <PageHeader
@@ -50,7 +50,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
       />
 
       {/* 2. Form: 傳入 initialData，表單會自動填好值 */}
-      <div className="max-w-[1200px] mx-auto">
+      <div className=" mx-auto">
         <ProductForm initialData={initialData} />
       </div>
 
