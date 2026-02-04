@@ -1,3 +1,4 @@
-# 貼上以下內容到 backend/requirements.txt
-fastapi
-uvicorn
+fastapi      # 網頁框架，幫你處理 GET/POST
+uvicorn      # 伺服器，讓 Python 程式能跑起來
+pydantic     # 資料驗證官，檢查 JSON 格式
+sqlalchemy   # 翻譯機，把 Python 物件轉成 SQL 指令
