@@ -1,6 +1,8 @@
 import { z } from "zod";
+import { id } from "zod/locales";
 
 export const productFormSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, "Product name is required"),
   product_line: z.string().min(1, "Product line is required"),
   series: z.string().optional(),

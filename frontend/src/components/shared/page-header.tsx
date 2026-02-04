@@ -6,10 +6,11 @@ import { LucideIcon, ChevronLeft, Link as LinkIcon } from 'lucide-react'; // 如
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
+import { FileText  } from 'lucide-react';
 
 interface PageHeaderProps {
   title: string;
-  icon?: LucideIcon;
+  icon?: string;
   subtitle?: string;     // 建議改用 subtitle 比較符合 React 命名習慣 (原本是 secondary_title)
   backUrl?: string;      // 建議改用 backUrl (原本是 previousPage)
   // 2. 是否自動偵測上一頁 (如果 backUrl 沒填，且這項為 true，就會自動算)
@@ -21,7 +22,7 @@ interface PageHeaderProps {
 
 export function PageHeader({
   title,
-  icon: Icon,
+  icon ,
   subtitle,
   backUrl,
   autoBack = false, // 預設不自動偵測，避免首頁出現返回按鈕
@@ -47,7 +48,8 @@ export function PageHeader({
 
         {/* 左側：Icon + 標題 */}
         <div className="flex items-center gap-2">
-          {Icon && <Icon className="h-6 w-6 text-slate-700" />}
+          {icon === "file" && <FileText className="h-6 w-6 text-slate-600" />}
+          {icon === "link" && <LinkIcon className="h-6 w-6 text-slate-600" />}
           <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
         </div>
 
