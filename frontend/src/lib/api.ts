@@ -1,5 +1,7 @@
 // src/lib/api.ts
 
+import { ur } from "zod/locales";
+
 // 判斷現在是在「瀏覽器(Client)」還是在「Docker容器(Server)」
 const isServer = typeof window === 'undefined';
 
@@ -21,17 +23,28 @@ export interface ProductPayload {
 }
 
 /* 取得資料 */
-export async function fetchProducts(query?: string) {
+export interface PaginatedResponse<T> {
+    data: T[];
+    total: number;
+    page: number;
+    limit: number;
+}
+
+
+export async function fetchProducts(query?: string ,page: number = 1){
 
     const url = new URL(`${API_URL}/products`);
     if (query) url.searchParams.set('name', query); // 拼接到後端網址
-    console.log('Fetching products from URL:', url.toString());
 
+    url.searchParams.set('page', page.toString()); // 傳送 page 給後端
+    url.searchParams.set('limit', '10');           // 設定一頁 10 筆
+
+    console.log('Fetching products with URL:', url.toString()); // 調試用，看看實際呼叫的 URL
     const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error('Failed to fetch products');
     }
-    return response.json();
+    return response.json() as Promise<PaginatedResponse<any>>; // 回傳分頁格式的資料
 }
 
 /* 依 ID 取得單一產品資料 */

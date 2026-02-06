@@ -1,4 +1,4 @@
-import { fetchProducts } from '@/lib/api'; // 引入真實 API
+'use client';
 
 import {
     Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -7,10 +7,17 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { FileText } from 'lucide-react';
 
+import { useAutoAnimate } from '@formkit/auto-animate/react'; // 1. 引入這個 hook
 
-export async function ProductTable({ query }: { query?: string }) { // 接收參數
+export interface ProductTableProps {
+    data?: any[];
+}
 
-    const products = await fetchProducts(query); // 傳給 API
+export function ProductTable({ data }: ProductTableProps) { // 接收參數
+
+    const [parent] = useAutoAnimate(); // 2. 使用 hook，它會回傳一個 ref (parent)
+    console.log(parent); // 確認 data 的內容
+    // 只要 parent 裡面的子元素有變動 (新增/刪除/移動)，就會自動產生動畫
     return (
         <Table className=' table-auto '>
             <TableHeader className=" ">
@@ -23,24 +30,32 @@ export async function ProductTable({ query }: { query?: string }) { // 接收參
                     <TableHead className="font-bold py-5 text-center min-w-[100px]">Update</TableHead>
                 </TableRow>
             </TableHeader>
-            <TableBody>
-                {products.map((product: any) => (
-                    <TableRow key={product.id} className="hover:bg-slate-50 transition-colors">
-                        <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
-                        <TableCell>{product.product_line}</TableCell>
-                        <TableCell>{product.series}</TableCell>
-                        <TableCell>{product.modified_by}</TableCell>
-                        <TableCell>{product.modified_date}</TableCell>
-                        <TableCell className="text-center">
-                            <Link href={`/products/${product.id}`}>
-                                <Button variant="ghost" size="icon">
-                                    <FileText className="h-4 w-4 text-slate-500 hover:text-blue-600" />
-                                </Button>
-                            </Link>
-                        </TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
+         <TableBody ref={parent} className="relative">
+                    {!data || data.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={6} className="h-24 text-center text-slate-500">
+                                No products found.
+                            </TableCell>
+                        </TableRow>
+                    ) : (
+                        data.map((product) => (
+                            <TableRow key={product.id} className="hover:bg-slate-50 ">
+                                <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
+                                <TableCell>{product.product_line}</TableCell>
+                                <TableCell>{product.series}</TableCell>
+                                <TableCell>{product.modified_by}</TableCell>
+                                <TableCell>{product.modified_date}</TableCell>
+                                <TableCell className="text-center">
+                                    <Link href={`/products/${product.id}`}>
+                                        <Button variant="ghost" size="icon">
+                                            <FileText className="h-4 w-4 text-slate-500 hover:text-blue-600" />
+                                        </Button>
+                                    </Link>
+                                </TableCell>
+                            </TableRow>
+                        ))
+                    )}
+                </TableBody>
         </Table>
     )
 }

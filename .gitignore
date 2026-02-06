@@ -6,3 +6,4 @@ __pycache__/
 *.db
 test.json
 test.tsx
+test.py

@@ -1,5 +1,7 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Optional , Generic, TypeVar
+
+T = TypeVar("T")
 
 # 1. 定義「檔案」的長相 (對應前端 files 裡的物件)
 class FileItem(BaseModel):
@@ -15,7 +17,7 @@ class ProductCreate(BaseModel):
     series: Optional[str] = None # 選填
     files: List[FileItem] = []   # 是一個 FileItem 的陣列
     modified_date: str
-
+    
 # 3. 定義「回傳給前端」時，會多出什麼欄位 (Response Schema)
 # 繼承 ProductCreate，所以上面有的它都有，但多出了 id 和 modified_by
 class Product(ProductCreate):
@@ -25,3 +27,12 @@ class Product(ProductCreate):
     class Config:
         # 這行是設定讓 Pydantic 可以讀取 SQLAlchemy 的資料格式
         from_attributes = True
+
+    
+class PaginatedResponse(BaseModel, Generic[T]):
+    data: List[T]      # 真正的資料 (例如產品列表)
+    total: int         # 總筆數 (用來算頁數)
+    page: int          # 目前第幾頁
+    limit: int         # 一頁幾筆    
+        
+
