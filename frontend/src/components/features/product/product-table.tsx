@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { FileText } from 'lucide-react';
 
 
-export async function  ProductTable() {
-    const products = await fetchProducts();
+export async function ProductTable({ query }: { query?: string }) { // 接收參數
+
+    const products = await fetchProducts(query); // 傳給 API
     return (
         <Table className=' table-auto '>
             <TableHeader className=" ">

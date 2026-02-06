@@ -1,18 +1,40 @@
 'use client';
 
-import { useState } from "react";
+import { useDebouncedCallback } from 'use-debounce';
+import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { FilterBar } from '@/components/shared/filter-bar';
 import { Input } from "@/components/ui/input";
 import { Search } from 'lucide-react';
 
 import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+    Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 
 
 
-export function ToolBar() {
-    const [searchTerm, setSearchTerm] = useState('');
+export function SearchBar() {
+    // const [searchTerm, setSearchTerm] = usse('');
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const { replace } = useRouter();
+
+    const handleSearch = useDebouncedCallback((term: string) => {
+        console.log(`Searching... ${term}`);
+        
+        const params = new URLSearchParams(searchParams);
+        
+        // 搜尋變更時，通常要重置回第 1 頁
+        // params.set('page', '1');
+
+        if (term) {
+            params.set('query', term);
+        } else {
+            params.delete('query');
+        }
+
+        replace(`${pathname}?${params.toString()}`);
+    }, 300);
+
 
 
     return (
@@ -23,11 +45,11 @@ export function ToolBar() {
                 <Input
                     placeholder="Search name..."
                     className="pl-9 "
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => handleSearch(e.target.value)}
+
+                    defaultValue={searchParams.get('query')?.toString()}
                 />
             </div>
-
             {/* 右側篩選選單 */}
             <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
                 <Select defaultValue="all" >

@@ -2,7 +2,8 @@ import React from 'react';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/shared/page-header'; // 用您剛剛改好的 Header
 import { ProductForm } from '@/components/features/product/product-form'; // 用我們做好的 Form
-import { getProductById } from '@/lib/mock-data'; // 模擬抓資料
+
+import { fetchProductById } from '@/lib/api';
 import { ProductFormValues } from '@/lib/schemas/product-schema';
 
 interface EditProductPageProps {
@@ -18,27 +19,14 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   const { id } = await params; 
   
   // 2. 使用解析出來的 id 去抓資料
-  const product = getProductById(id);
+  const product = await fetchProductById(id);
 
   // 2. 如果找不到產品，顯示 404
   if (!product) {
     notFound();
   }
 
-  // 3. 資料轉換 (Transform)
-  // 因為後端(Mock)的資料結構跟表單(Form)的結構可能不完全一樣
-  // 我們需要把它轉成 ProductFormValues 格式
-  const initialData: ProductFormValues = {
-    name: product.name,
-    product_line: product.product_line,
-    series: product.series,
-    // 這裡先塞假檔案資料，因為 Mock Data 的結構可能比較簡單
-    // 等接後端時，這裡會是真實的 product.files
-    files: [
-      { category: "User Guide", name: `${product.name} Manual`, link: "https://example.com/manual.pdf", disabled_countries: [] },
-      { category: "Driver & Software", name: "v1.0 Driver", link: "https://example.com/driver.zip", disabled_countries: [] },
-    ]
-  };
+  console.log("Initial Data for Form:", product);
 
   return (
     <div className="w-full px-12 pt-6 bg-white min-h-screen">
@@ -51,7 +39,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
       {/* 2. Form: 傳入 initialData，表單會自動填好值 */}
       <div className=" mx-auto">
-        <ProductForm initialData={initialData} />
+        <ProductForm initialData={product} />
       </div>
 
     </div>

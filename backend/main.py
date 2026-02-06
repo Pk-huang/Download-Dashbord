@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List ,Optional
 from fastapi.middleware.cors import CORSMiddleware
 
 import models
@@ -28,9 +28,19 @@ app.add_middleware(
 
 # 取得所有產品 (GET)
 @app.get("/products", response_model=List[schemas.Product])
-def read_products(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def read_products(skip: int = 0, limit: int = 10,name: Optional[str] = None,  db: Session = Depends(get_db)):
     # 去資料庫撈資料，相當於 SQL: SELECT * FROM products
-    products = db.query(models.Product).offset(skip).limit(limit).all()
+  # 先建立基本的查詢物件
+    query = db.query(models.Product)
+    
+    # 3. 判斷：如果有傳 name 進來，就加上過濾條件
+    if name:
+        # models.Product.name.contains(name) 會轉成 SQL 的 LIKE '%name%'
+        # 這代表「只要名稱裡面包含這個字」都算符合
+        query = query.filter(models.Product.name.contains(name))
+    
+    # 最後再加上分頁並執行查詢
+    products = query.offset(skip).limit(limit).all()
     return products
 
 # 新增產品 (POST)

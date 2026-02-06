@@ -18,3 +18,6 @@ class Product(Base):
     # 系統自動欄位
     modified_by = Column(String, default="Admin")
     modified_date = Column(String)
+    
+    
+    

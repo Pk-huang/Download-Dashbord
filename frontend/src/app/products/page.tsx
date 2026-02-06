@@ -5,10 +5,19 @@ import { Button } from "@/components/ui/button";
 
 import { PageHeader } from '@/components/shared/page-header';
 import { ProductTable } from '@/components/features/product/product-table';
-import { ToolBar } from '@/components/features/product/tool-bar';
+import { SearchBar } from '@/components/features/product/searchl-bar';
 import { PageNav } from '@/components/shared/paginav';
 
-export default function ProductListPage() {
+interface ProductListPageProps {
+  // 可以在這裡定義接收的 props 型別
+  searchParams?: {  
+    query?: string;
+  };
+}
+
+export default async function ProductListPage({ searchParams }: ProductListPageProps  ) {
+ const params = await searchParams;
+  const query = params?.query || '';
  
   return (
     <div className=" w-full px-12 pt-6 bg-white min-h-screen">
@@ -31,11 +40,11 @@ export default function ProductListPage() {
         </Link>
       </div>
 
-      <ToolBar />
+      <SearchBar />
 
       {/* 3. 表格區域 (Table 比較特殊，通常直接放，或是之後也可以包成 DataTable) */}
       <div className='rounded-md overflow-hidden'>
-        <ProductTable />
+        <ProductTable query={query}/>
       </div>
 
       <PageNav />

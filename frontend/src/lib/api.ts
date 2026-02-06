@@ -5,9 +5,9 @@ const isServer = typeof window === 'undefined';
 
 // 如果是 Server 端 (Docker內)，要連到 "http://backend:8000" (容器名稱)
 // 如果是 Client 端 (瀏覽器)，要連到 "http://localhost:8000" (您的本機)
-const API_URL = isServer 
-  ? "http://backend:8000"  // Docker 內部互連
-  : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000");
+const API_URL = isServer
+    ? "http://backend:8000"  // Docker 內部互連
+    : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000");
 
 // ... 下面的 fetch 程式碼不用改
 
@@ -16,15 +16,18 @@ export interface ProductPayload {
     name: string,
     product_line: string,
     series?: string,
-    files: any [],
+    files: any[],
     modified_date: string,
 }
 
 /* 取得資料 */
-export async function fetchProducts() {
-    console.log("API_URL:", API_URL+"/products");
-    const response = await fetch(`${API_URL}/products`);
+export async function fetchProducts(query?: string) {
 
+    const url = new URL(`${API_URL}/products`);
+    if (query) url.searchParams.set('name', query); // 拼接到後端網址
+    console.log('Fetching products from URL:', url.toString());
+
+    const response = await fetch(url.toString());
     if (!response.ok) {
         throw new Error('Failed to fetch products');
     }
@@ -42,36 +45,36 @@ export async function fetchProductById(id: string) {
 
 /* 新增產品 */
 export async function createProduct(data: ProductPayload) {
-      const response = await fetch(`${API_URL}/products`,{
+    const response = await fetch(`${API_URL}/products`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
-      });
-      if (!response.ok) {
-          throw new Error('Failed to create product');
-      }
-      return response.json();
+    });
+    if (!response.ok) {
+        throw new Error('Failed to create product');
+    }
+    return response.json();
 }
 
 export async function updateProduct(id: string, data: ProductPayload) {
-        const response = await fetch(`${API_URL}/products/${id}`,{
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(data),
-        });
-        if (!response.ok) {
-            throw new Error('Failed to update product');
-        }
-        return response.json();
+    const response = await fetch(`${API_URL}/products/${id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+    if (!response.ok) {
+        throw new Error('Failed to update product');
+    }
+    return response.json();
 }
 
 
 export async function deleteProduct(id: string) {
-    const response = await fetch(`${API_URL}/products/${id}`,{
+    const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'DELETE',
     });
     if (!response.ok) {
