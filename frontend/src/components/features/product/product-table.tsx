@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { FileText } from 'lucide-react';
 
-import { useAutoAnimate } from '@formkit/auto-animate/react'; // 1. 引入這個 hook
+import { motion, AnimatePresence } from 'framer-motion'; // 1. 引入
 
 export interface ProductTableProps {
     data?: any[];
@@ -15,9 +15,9 @@ export interface ProductTableProps {
 
 export function ProductTable({ data }: ProductTableProps) { // 接收參數
 
-    const [parent] = useAutoAnimate(); // 2. 使用 hook，它會回傳一個 ref (parent)
-    console.log(parent); // 確認 data 的內容
-    // 只要 parent 裡面的子元素有變動 (新增/刪除/移動)，就會自動產生動畫
+
+
+
     return (
         <Table className=' table-auto '>
             <TableHeader className=" ">
@@ -30,7 +30,8 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                     <TableHead className="font-bold py-5 text-center min-w-[100px]">Update</TableHead>
                 </TableRow>
             </TableHeader>
-         <TableBody ref={parent} className="relative">
+            <AnimatePresence mode='popLayout'>
+                <TableBody className="relative">
                     {!data || data.length === 0 ? (
                         <TableRow>
                             <TableCell colSpan={6} className="h-24 text-center text-slate-500">
@@ -38,8 +39,16 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                             </TableCell>
                         </TableRow>
                     ) : (
-                        data.map((product) => (
-                            <TableRow key={product.id} className="hover:bg-slate-50 ">
+                        data.map((product) => (   
+                            <motion.tr
+                                key={product.id}
+                                layout
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.3 }}
+                                className="hover:bg-slate-50  border-b"
+                            >
                                 <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
                                 <TableCell>{product.product_line}</TableCell>
                                 <TableCell>{product.series}</TableCell>
@@ -52,10 +61,11 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                                         </Button>
                                     </Link>
                                 </TableCell>
-                            </TableRow>
+                            </motion.tr>
                         ))
                     )}
                 </TableBody>
+            </AnimatePresence>
         </Table>
     )
 }
