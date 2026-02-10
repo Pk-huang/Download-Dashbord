@@ -23,6 +23,8 @@ import {
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct, ProductPayload } from '@/lib/api';
 
+import { CountrySelector } from '@/components/shared/country-selector'; 
+
 
 
 interface ProductFormProps {
@@ -308,9 +310,12 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
                       {/* Country Button */}
                       <TableCell className="text-center">
-                        <Button type="button" variant="ghost" size="icon">
-                          <Globe className="h-4 w-4 text-slate-500 hover:text-blue-600" />
-                        </Button>
+                        <CountrySelector
+                          Selectcoutry={form.watch(`files.${rowIndex}.disabled_countries`) || []}
+                          onChange={(newCountries) => {
+                            form.setValue(`files.${rowIndex}.disabled_countries`, newCountries, { shouldDirty: true });
+                          }}
+                        />
                       </TableCell>
 
                       {/* Remove Button */}
