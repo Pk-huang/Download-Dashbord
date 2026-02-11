@@ -31,30 +31,33 @@ interface ProductFormProps {
 
 // 設定預設值
 const defaultValues: Partial<ProductFormValues> = {
+  id: undefined, // 這裡不給預設 ID，因為新增時沒有 ID，編輯時會從 initialData 傳入
   name: "",
   product_line: "",
   series: "",
   files: [
-    { category: "User Guides", name: "", link: "", disabled_countries: [] }
+    { category: "", name: "", link: "", disabled_countries: [] }
   ],
 };
 
 
 
 export function ProductForm({ initialData }: ProductFormProps) {
-
+  console.log("Initial Data in Form:", initialData); // 調試用，看看傳進來的資料長什麼樣子
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema) as any,
     defaultValues: initialData || defaultValues,
     mode: "onChange",
   });
-
+  console.log(initialData?.id)
 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false)
 
 
+
   async function onSubmit(data: ProductFormValues) {
+    console.log("Form Data to Submit:", data); // 調試用，看看要送出的資料長什麼樣子
     try {
       setIsSubmitting(true); // 開啟 Loading，避免使用者重複點擊
 
@@ -75,13 +78,14 @@ export function ProductForm({ initialData }: ProductFormProps) {
         modified_by: "Admin" // 這裡暫時寫死，實際應該從使用者登入資訊取得
       }
 
-      console.log(" 🚀 Sending Payload:", payload);
+
 
       if (initialData?.id) {
         // --- 編輯模式 (Update) ---
         // 這裡需要注意：initialData 裡面要有 id。
         // 如果您的 ProductFormValues Type 沒有 id，可以用 (initialData as any).id 暫時繞過，或修正 Type
-        await updateProduct(initialData.id, payload);
+        await updateProduct(String(initialData.id), payload);
+        console.log("Product updated successfully");
         alert("更新成功！");
       } else {
         // --- 新增模式 (Create) ---
@@ -100,10 +104,15 @@ export function ProductForm({ initialData }: ProductFormProps) {
     }
   }
 
+  const onError = (errors: any) => {
+    console.log("❌ 表單驗證失敗 (Validation Errors):", errors);
+    alert("表單有欄位未填寫正確，請檢查 Console Log");
+  };
+
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  ">
+      <form onSubmit={form.handleSubmit(onSubmit, onError )} className="space-y-8  ">
 
         {/* --- 1. 基本資料區域 --- */}
         <div className="space-y-4">

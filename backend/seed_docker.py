@@ -11,13 +11,13 @@ sys.path.append(os.getcwd())
 try:
     from database import SessionLocal, engine, Base
     from models import Product
+    from sqlalchemy import text # 引入 text 用於執行 SQL
 except ImportError as e:
     print("錯誤: 找不到 database 或 models 模組。")
     print(f"詳細錯誤: {e}")
-    print("請確保這個腳本放在 backend 資料夾內，且與 main.py 同一層。")
     sys.exit(1)
 
-# 1. 準備資料
+# 1. 準備資料 (保持不變)
 SEED_DATA = [
   {"name": "VBS105-W", "product_line": "Accessories", "series": "Large Format Display"},
   {"name": "VBS104-W", "product_line": "Accessories", "series": "Large Format Display"},
@@ -101,48 +101,54 @@ SEED_DATA = [
   {"name": "CDE65G3-1M", "product_line": "Large Format Display", "series": "Commercial TVs"}
 ]
 
-def get_random_date(year_start=2025, year_end=2026):
-    start_date = datetime(year_start, 1, 1)
-    end_date = datetime(year_end, 12, 31)
+# 2. 修改：日期邏輯 (過去半年 ~ 今天)
+def get_random_past_date():
+    end_date = datetime.now()  # 結束時間就是「現在」
+    start_date = end_date - timedelta(days=180) # 開始時間是「半年前」
+    
     delta = end_date - start_date
     random_days = random.randrange(delta.days)
-    return (start_date + timedelta(days=random_days)).strftime("%Y-%m-%d")
+    random_date = start_date + timedelta(days=random_days)
+    
+    return random_date.strftime("%Y-%m-%d")
 
-# 2. 執行匯入
+# 3. 執行匯入
 def seed():
     # 建立資料庫連線
     db = SessionLocal()
     try:
-        # 強制建立資料表 (如果不存在)
+        print("正在重置資料庫...")
+
+        # A. 徹底刪除舊表 (這樣 ID 才會歸零)
+        Base.metadata.drop_all(bind=engine)
+        
+        # B. 重新建立新表
         Base.metadata.create_all(bind=engine)
-        print("資料表結構檢查完畢。")
+        print("資料表已重建，ID 已重置。")
 
-        # 清空資料
-        db.query(Product).delete()
-        db.commit()
-        print("舊資料已清空。")
-
-        # 寫入新資料
+        # C. 寫入新資料
+        print("正在寫入新資料...")
         count = 0
         for item in SEED_DATA:
             product = Product(
                 name=item["name"],
                 product_line=item["product_line"],
                 series=item["series"],
-                files=[],  # 這裡 JSON 欄位直接給 list，SQLAlchemy 會處理
+                files=[],  # 空檔案列表
                 modified_by="Admin",
-                modified_date=get_random_date()
+                modified_date=get_random_past_date() # ✅ 使用新的日期邏輯
             )
             db.add(product)
             count += 1
         
         db.commit()
         print(f"==========================================")
-        print(f"成功匯入 {count} 筆資料到 Docker 資料庫！")
+        print(f"✅ 成功匯入 {count} 筆資料！")
+        print(f"📅 日期範圍：過去 180 天內 ~ 今天")
         print(f"==========================================")
         
     except Exception as e:
-        print(f"匯入失敗: {e}")
+        print(f"❌ 匯入失敗: {e}")
         db.rollback()
     finally:
         db.close()

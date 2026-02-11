@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import desc # 1. 記得引入 desc (descending)
 
 
 import models
@@ -39,7 +40,13 @@ def read_products(
     # 去資料庫撈資料，相當於 SQL: SELECT * FROM products
     # 先建立基本的查詢物件
     
+    
+
     query = db.query(models.Product)
+    
+    query = query.order_by(
+            desc(models.Product.modified_date)
+        )
 
     # 3. 判斷：如果有傳 name 進來，就加上過濾條件
     if name:
@@ -47,18 +54,16 @@ def read_products(
         # 這代表「只要名稱裡面包含這個字」都算符合
         query = query.filter(models.Product.name.contains(name))
 
+   
+
     total = query.count()  # 4. 先算出總筆數，這樣前端才知道分頁要怎麼做
-    skip = (page - 1) * limit  # 5. 計算要跳過幾筆 (Skip Logic)，這樣才能拿到正確的分頁資料
-    
+    skip = (
+        page - 1
+    ) * limit  # 5. 計算要跳過幾筆 (Skip Logic)，這樣才能拿到正確的分頁資料
 
     # 最後再加上分頁並執行查詢
     products = query.offset(skip).limit(limit).all()
-    return {
-        "data": products,
-        "total": total,
-        "page": page,
-        "limit": limit
-    }
+    return {"data": products, "total": total, "page": page, "limit": limit}
 
 
 # 新增產品 (POST)

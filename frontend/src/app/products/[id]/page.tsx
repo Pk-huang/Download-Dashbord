@@ -1,7 +1,7 @@
 import React from 'react';
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/shared/page-header'; // 用您剛剛改好的 Header
-import { ProductForm } from '@/components/features/product/product-form'; // 用我們做好的 Form
+import { ProductForm } from '@/components/shared/product-form'; // 用我們做好的 Form
 
 import { fetchProductById } from '@/lib/api';
 import { ProductFormValues } from '@/lib/schemas/product-schema';
