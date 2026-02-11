@@ -7,6 +7,7 @@ services:
       - ./backend:/app
       # 讓 SQLite 資料庫檔案持久化 (就算容器刪掉資料還在)
       - ./backend_data:/app/data 
+      - ./backend_data:/app/uploads # 如果你有上傳功能，也可以把上傳的檔案放在這裡 
     environment:
       - PYTHONUNBUFFERED=1
 

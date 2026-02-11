@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {  Save, Folders } from 'lucide-react';
+import { Save, Folders } from 'lucide-react';
 import { ProductFormValues, productFormSchema } from '@/lib/schemas/product-schema';
 
 // UI Components
@@ -63,16 +63,25 @@ export function ProductForm({ initialData }: ProductFormProps) {
         name: data.name,
         product_line: data.product_line,
         series: data.series || "", // 後端如果是 Optional，這裡可以給空字串或 undefined
-        files: data.files || [],
+        files: (data.files || []).map((file, index) => ({
+          category: file.category,
+          name: file.name,
+          link: file.link,
+          disabled_countries: file.disabled_countries || [],
+          order: index + 1 // 自動產生排序 1, 2, 3...
+        })),
         /* Disabled countries needed */
-        modified_date: new Date().toISOString().split('T')[0] // 自動產生今天的日期 (例如 "2024-01-29")
+        modified_date: new Date().toISOString().split('T')[0], // 自動產生今天的日期 (例如 "2024-01-29")
+        modified_by: "Admin" // 這裡暫時寫死，實際應該從使用者登入資訊取得
       }
+
+      console.log(" 🚀 Sending Payload:", payload);
 
       if (initialData?.id) {
         // --- 編輯模式 (Update) ---
         // 這裡需要注意：initialData 裡面要有 id。
         // 如果您的 ProductFormValues Type 沒有 id，可以用 (initialData as any).id 暫時繞過，或修正 Type
-        await updateProduct((initialData as any).id, payload);
+        await updateProduct(initialData.id, payload);
         alert("更新成功！");
       } else {
         // --- 新增模式 (Create) ---
@@ -170,8 +179,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         <div className="space-y-4">
           <p className="text-base font-medium text-slate-700  pb-2 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> File upload and setting</p>
 
-  <ProductFiles />
-          
+          <ProductFiles />
+
         </div>
 
         {/* --- 底部按鈕區 --- */}

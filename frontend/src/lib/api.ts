@@ -13,14 +13,25 @@ const API_URL = isServer
 
 // ... 下面的 fetch 程式碼不用改
 
+export interface FileItemPayload {
+    category: string;
+    name: string;
+    link: string;
+    disabled_countries: string[];
+    order?: number; // 
+}
+
 
 export interface ProductPayload {
     name: string,
     product_line: string,
     series?: string,
-    files: any[],
+    files?: FileItemPayload[],
     modified_date: string,
+    modified_by: string
 }
+
+
 
 /* 取得資料 */
 export interface PaginatedResponse<T> {
@@ -31,7 +42,7 @@ export interface PaginatedResponse<T> {
 }
 
 
-export async function fetchProducts(query?: string ,page: number = 1){
+export async function fetchProducts(query?: string, page: number = 1) {
 
     const url = new URL(`${API_URL}/products`);
     if (query) url.searchParams.set('name', query); // 拼接到後端網址
