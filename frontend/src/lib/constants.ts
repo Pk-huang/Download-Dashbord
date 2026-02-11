@@ -10,3 +10,13 @@ export const REGION_CONFIG: Record<string, string[]> = {
 
 // 產生所有國家的扁平陣列 (用來做「全部隱藏」功能)
 export const ALL_COUNTRIES = Object.values(REGION_CONFIG).flat();
+
+export const FILE_CATEGORIES = [
+    "User Guide",
+    "Driver & Software",
+    "Technical Document",
+    "Reports",
+    "Installation Guide"
+] as const;
+
+

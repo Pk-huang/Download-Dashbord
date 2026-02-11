@@ -46,7 +46,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
         } else {
             setSelected([...selected, Countrycode]); // 加入
         }
-        console.log(`Toggled ${Countrycode}. New selected:`, selected);
+     
     };
 
     // 切換整個區域 (例如 VSA)
@@ -62,7 +62,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
             // 如果沒有全選 -> 全部加入 (加入該區域所有國家，注意去重複)
             setSelected(Array.from(new Set([...selected, ...countriesInRegion])));
         }
-        console.log(`Toggled region ${regionKey}. New selected:`, selected);
+       
     }
 
     const toggleAll = () => {
@@ -74,7 +74,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
             // 沒有全選 -> 全部加入
             setSelected(ALL_COUNTRIES);
         }
-        console.log(`Toggled ALL. New selected:`, selected);
+        
     }
 
     const handleConfirm = () => {

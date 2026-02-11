@@ -2,29 +2,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, useFieldArray } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Trash2, GripVertical, Globe, Plus, Save, Folders } from 'lucide-react';
+import {  Save, Folders } from 'lucide-react';
 import { ProductFormValues, productFormSchema } from '@/lib/schemas/product-schema';
-import { cn } from '@/lib/utils';
 
 // UI Components
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
-  Form, FormControl, FormField, FormItem, FormMessage,
+  FormControl, FormField, FormItem, FormMessage,
 } from '@/components/ui/form';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '@/components/ui/select';
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table';
+
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct, ProductPayload } from '@/lib/api';
 
-import { CountrySelector } from '@/components/shared/country-selector'; 
 
+import { ProductFiles } from '@/components/shared/file-table'; // 這是我們剛剛做好的檔案列表元件
+import { FormProvider } from "react-hook-form"; // 這個是 react-hook-form 提供的 Context Provider，用來讓子元件（例如 ProductFiles）能夠存取表單狀態和方法
 
 
 interface ProductFormProps {
@@ -41,19 +39,9 @@ const defaultValues: Partial<ProductFormValues> = {
   ],
 };
 
-const FILTER_OPTIONS = [
-  "User Guide",
-  "Driver & Software",
-  "Technical Document",
-  "Reports",
-  "Installation Guide",
-  "All"
-];
+
 
 export function ProductForm({ initialData }: ProductFormProps) {
-
-  /* filter function*/
-  const [activeFilter, setActiveFilter] = useState("All");
 
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema) as any,
@@ -61,26 +49,6 @@ export function ProductForm({ initialData }: ProductFormProps) {
     mode: "onChange",
   });
 
-  const { fields, append, remove } = useFieldArray({
-    control: form.control,
-    name: "files",
-  });
-
-  // 監聽表單數值變化，用於篩選顯示
-  const watchedFiles = form.watch("files");
-
-
-  const handleAddRow = () => {
-    const defaultCategory = activeFilter === "All" ? "User Guide" : activeFilter;
-    append({
-      category: defaultCategory,
-      name: "",
-      link: "",
-      disabled_countries: []
-    });
-  };
-
-  /* filter function */
 
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -125,7 +93,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8  ">
 
         {/* --- 1. 基本資料區域 --- */}
@@ -202,161 +170,8 @@ export function ProductForm({ initialData }: ProductFormProps) {
         <div className="space-y-4">
           <p className="text-base font-medium text-slate-700  pb-2 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> File upload and setting</p>
 
-          {/* Filter Tabs */}
-          <div className="flex flex-wrap gap-2">
-            {FILTER_OPTIONS.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setActiveFilter(filter)}
-                className={cn(
-                  "px-4 py-1.5 rounded-full text-sm font-medium transition-colors border",
-                  activeFilter === filter
-                    ? "bg-slate-800 text-white border-slate-800"
-                    : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
-                )}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-
-          {/* Data Table */}
-          <div className=" rounded-md overflow-hidden bg-white">
-            <Table>
-              <TableHeader className="bg-slate-100">
-                <TableRow>
-                  <TableHead className="w-[50px] py-5"></TableHead>
-                  <TableHead className="w-[200px] py-5">Category</TableHead>
-                  <TableHead className="py-5">Name of doc/file</TableHead>
-                  <TableHead className="py-5">Link to outer server</TableHead>
-                  <TableHead className="w-[80px] py-5 text-center">Country</TableHead>
-                  <TableHead className="w-[80px] py-5 text-center">Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {fields.map((fieldItem, rowIndex) => {
-                  // 取得當前行的最新資料
-                  // 我們使用 watchedFiles[rowIndex] 來確保篩選邏輯使用的是使用者當下選擇的值
-                  const currentFileValues = watchedFiles?.[rowIndex];
-                  const currentCategory = currentFileValues?.category;
-
-                  // 決定是否顯示該行
-                  const isRowVisible = activeFilter === "All" || currentCategory === activeFilter;
-
-                  if (!isRowVisible) return null;
-
-                  return (
-                    <TableRow key={fieldItem.id} className="group">
-                      <TableCell>
-                        <GripVertical className="h-4 w-4 text-slate-400 cursor-move" />
-                      </TableCell>
-
-                      {/* Category */}
-                      <TableCell>
-                        <FormField
-                          control={form.control}
-                          name={`files.${rowIndex}.category`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                <FormControl>
-                                  <SelectTrigger className="h-9 w-full">
-                                    <SelectValue placeholder="Select" />
-                                  </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                  {FILTER_OPTIONS.filter(opt => opt !== 'All').map(opt => (
-                                    <SelectItem key={opt} value={opt}>{opt}</SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormItem>
-                          )}
-                        />
-                      </TableCell>
-
-                      {/* Name */}
-                      <TableCell>
-                        <FormField
-                          control={form.control}
-                          name={`files.${rowIndex}.name`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input className="h-9" placeholder="File name" {...field} />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </TableCell>
-
-                      {/* Link */}
-                      <TableCell>
-                        <FormField
-                          control={form.control}
-                          name={`files.${rowIndex}.link`}
-                          render={({ field }) => (
-                            <FormItem>
-                              <FormControl>
-                                <Input className="h-9" placeholder="https://" {...field} />
-                              </FormControl>
-                              <FormMessage className="text-xs" />
-                            </FormItem>
-                          )}
-                        />
-                      </TableCell>
-
-                      {/* Country Button */}
-                      <TableCell className="text-center">
-                        <CountrySelector
-                          Selectcoutry={form.watch(`files.${rowIndex}.disabled_countries`) || []}
-                          onChange={(newCountries) => {
-                            form.setValue(`files.${rowIndex}.disabled_countries`, newCountries, { shouldDirty: true });
-                          }}
-                        />
-                      </TableCell>
-
-                      {/* Remove Button */}
-                      <TableCell className="text-center">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => remove(rowIndex)} // 這裡必須使用 rowIndex 來移除正確的項目
-                          className="text-slate-400 hover:text-red-600"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-
-                {/* Empty State Hint */}
-                {watchedFiles?.filter(f => activeFilter === "All" || f.category === activeFilter).length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center text-slate-500">
-                      No files found in "{activeFilter}" category.
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="mt-4 flex justify-center">
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full border-dashed border-2 hover:bg-slate-50 py-6 text-slate-500"
-              onClick={handleAddRow}
-            >
-              <Plus className="mr-2 h-4 w-4" />
-              Add File to {activeFilter === "All" ? "List" : activeFilter}
-            </Button>
-          </div>
+  <ProductFiles />
+          
         </div>
 
         {/* --- 底部按鈕區 --- */}
@@ -379,6 +194,6 @@ export function ProductForm({ initialData }: ProductFormProps) {
         </div>
 
       </form>
-    </Form>
+    </FormProvider>
   );
 }
