@@ -81,18 +81,7 @@ export function PageHeader({
 
         {/* 右側：動作區 (返回按鈕 或 其他按鈕) */}
         <div className="flex items-center gap-2">
-
-     
           <ModeToggle />
-          {/* 如果有 backUrl，顯示返回按鈕 */}
-          {finalBackUrl && (
-            <Link href={finalBackUrl}>
-              <Button variant="ghost" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-muted/50 dark:text-slate-300 dark:hover:text-slate-100">
-                <ChevronLeft className="h-4 w-4" />
-                Back to List
-              </Button>
-            </Link>
-          )}
         </div>
       </div>
 
