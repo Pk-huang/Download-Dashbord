@@ -32,7 +32,7 @@ export function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <div className="flex flex-col h-screen w-auto border-r border-slate-200  sticky top-0">
+        <div className="flex flex-col h-screen w-auto border-r  sticky top-0  border-slate-200 bg-slate-50 dark:bg-background dark:border-stone-800">
 
             {/* 1. Logo 區域 */}
             <div className="p-6 border-b ">
@@ -52,11 +52,11 @@ export function Sidebar() {
                             className={cn(
                                 "flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-md transition-colors",
                                 isActive
-                                    ? "text-vsbds-sky" // 啟動狀態：淺藍背景 + 藍字
-                                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900" // 一般狀態
+                                    ? "text-vsbds-sky dark:text-vsbds-sky dark:bg-muted/50" // 啟動狀態：淺藍背景 + 藍字
+                                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:hover:bg-muted/50 dark:hover:text-slate-300" // 一般狀態
                             )}
                         >
-                            <item.icon className={cn("h-5 w-5", isActive ? "text-vsbds-sky" : "text-slate-500")} />
+                            <item.icon className={cn("h-5 w-5", isActive ? "text-vsbds-sky dark:text-vsbds-sky" : "text-slate-500 dark:text-slate-300")} />
                             {item.title}
                         </Link>
                     );
@@ -64,7 +64,7 @@ export function Sidebar() {
             </nav>
 
             {/* 3. 底部區域 (預留) */}
-            <div className="p-4 border-t border-slate-100 text-xs text-slate-400">
+            <div className="p-4 border-t border-slate-100 text-xs text-slate-400 dark:border-stone-800 dark:text-slate-400">
                 v1.0.0
             </div>
         </div>

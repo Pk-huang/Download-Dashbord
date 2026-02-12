@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { FileText  } from 'lucide-react';
+import { ModeToggle } from '@/components/shared/mode-toggle'; // 2. 如果你想在頁面標題右側放一個切換主題的按鈕，可以用這個元件
+
 
 interface PageHeaderProps {
   title: string;
@@ -48,9 +50,10 @@ export function PageHeader({
 
         {/* 左側：Icon + 標題 */}
         <div className="flex items-center gap-2">
-          {icon === "file" && <FileText className="h-6 w-6 text-slate-600" />}
-          {icon === "link" && <LinkIcon className="h-6 w-6 text-slate-600" />}
-          <h1 className="text-2xl font-bold text-slate-900">{title}</h1>
+          {icon === "file" && <FileText className="h-6 w-6 text-slate-600 dark:text-slate-300" />}
+          {icon === "link" && <LinkIcon className="h-6 w-6 text-slate-600 dark:text-slate-300" />}
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">{title}</h1>
+              <ModeToggle />
         </div>
 
         {/* 右側：動作區 (返回按鈕 或 其他按鈕) */}
@@ -62,7 +65,7 @@ export function PageHeader({
           {/* 如果有 backUrl，顯示返回按鈕 */}
           {finalBackUrl && (
             <Link href={finalBackUrl}>
-              <Button variant="ghost" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+              <Button variant="ghost" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 dark:hover:bg-muted/50 dark:text-slate-300 dark:hover:text-slate-100">
                 <ChevronLeft className="h-4 w-4" />
                 Back to List
               </Button>
@@ -73,7 +76,7 @@ export function PageHeader({
 
       {/* 下半部：副標題 (如果有) */}
       {subtitle && (
-        <p className="text-base font-medium ">
+        <p className="text-base font-medium text-slate-700 dark:text-slate-300">
           {subtitle}
         </p>
       )}

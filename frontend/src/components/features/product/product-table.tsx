@@ -21,7 +21,7 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
     return (
         <Table className=' table-auto '>
             <TableHeader className=" ">
-                <TableRow className='bg-slate-100 '>
+                <TableRow className='bg-slate-100  dark:bg-muted/50 '>
                     <TableHead className="font-bold py-5  min-w-[150px]">Name</TableHead>
                     <TableHead className="font-bold py-5">Product Line</TableHead>
                     <TableHead className="font-bold py-5">Series</TableHead>
@@ -47,9 +47,9 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
-                                className="hover:bg-slate-50  border-b"
+                                className="hover:bg-slate-50  border-b border-gray-200 dark:border-gray-700 cursor-pointer"
                             >
-                                <TableCell className="font-medium text-slate-900">{product.name}</TableCell>
+                                <TableCell className="font-medium text-slate-900 ">{product.name}</TableCell>
                                 <TableCell>{product.product_line}</TableCell>
                                 <TableCell>{product.series}</TableCell>
                                 <TableCell>{product.modified_by}</TableCell>

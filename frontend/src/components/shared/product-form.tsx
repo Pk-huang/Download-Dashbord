@@ -126,7 +126,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
               render={({ field }) => (
                 <FormItem>
 
-                  <label className="text-base font-medium text-slate-700 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> Product Name</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Product Name</label>
                   <FormControl className='px-6'>
                     <Input placeholder="e.g. VP1655" {...field} />
                   </FormControl>
@@ -141,7 +141,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
               name="product_line"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-base font-medium text-slate-700 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> Product Line</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Product Line</label>
                   <Select onValueChange={field.onChange} defaultValue={field.value} >
                     <FormControl className='w-full px-6'>
                       <SelectTrigger>
@@ -165,7 +165,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
               name="series"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-base font-medium text-slate-700 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> Series (Optional)</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Series (Optional)</label>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl className='w-full px-6'>
                       <SelectTrigger>
@@ -186,7 +186,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
         {/* --- 2. 檔案列表區域 (動態表格) --- */}
         <div className="space-y-4">
-          <p className="text-base font-medium text-slate-700  pb-2 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 ' /> File upload and setting</p>
+          <p className="text-base font-medium text-slate-700 dark:text-slate-300 pb-2 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> File upload and setting</p>
 
           <ProductFiles />
 

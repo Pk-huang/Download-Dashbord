@@ -76,9 +76,7 @@ export function ProductFiles() {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-medium">File Upload and Settings</h3>
-            </div>
+     
 
             {/* --- Filter Tabs (篩選頁籤) --- */}
             <div className="flex flex-wrap gap-2 mb-6">
@@ -92,7 +90,7 @@ export function ProductFiles() {
                             "", // 調整大小
                             activeFilter === filter
                                 ? "bg-slate-800 text-white hover:bg-slate-700 hover:text-white border-slate-800"
-                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50"
+                                : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 dark:bg-muted/50 dark:text-slate-300 dark:border-slate-600 dark:hover:bg-slate-700"
                         )}
                     >
                         {filter}
@@ -103,7 +101,7 @@ export function ProductFiles() {
             {/* --- Data Table --- */}
             <div className="rounded-md  overflow-hidden ">
                 <Table>
-                    <TableHeader className="bg-slate-50">
+                    <TableHeader className="bg-slate-50 dark:bg-muted/50 ">
                         <TableRow>
                             <TableHead className="w-[40px]"></TableHead>
                             <TableHead className="w-[180px]">Category</TableHead>

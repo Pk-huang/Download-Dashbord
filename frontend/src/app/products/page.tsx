@@ -29,7 +29,7 @@ export default async function ProductListPage({ searchParams }: ProductListPageP
   const response = await fetchProducts(query, currentPage); // 呼叫 API，傳入 query 和 page
 
   return (
-    <div className=" w-full px-12 pt-6 bg-white min-h-screen">
+    <div className=" w-full px-12 pt-6 min-h-screen">
 
       {/* 1. 使用共用的 PageHeader */}
       <div className="flex items-center justify-between mb-6">

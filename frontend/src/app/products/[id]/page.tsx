@@ -1,10 +1,10 @@
-import React from 'react';
+
 import { notFound } from 'next/navigation';
 import { PageHeader } from '@/components/shared/page-header'; // 用您剛剛改好的 Header
 import { ProductForm } from '@/components/shared/product-form'; // 用我們做好的 Form
 
 import { fetchProductById } from '@/lib/api';
-import { ProductFormValues } from '@/lib/schemas/product-schema';
+
 
 interface EditProductPageProps {
   params: Promise<{
@@ -29,7 +29,7 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
   console.log("Initial Data for Form:", product);
 
   return (
-    <div className="w-full px-12 pt-6 bg-white min-h-screen">
+    <div className="w-full px-12 pt-6  min-h-screen bg-white dark:bg-background">
 
       {/* 1. Header: 使用 autoBack 自動偵測回上一頁 */}
       <PageHeader
