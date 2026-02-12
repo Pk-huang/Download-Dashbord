@@ -47,7 +47,7 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.3 }}
-                                className="hover:bg-slate-50  border-b border-gray-200 dark:border-gray-700 cursor-pointer"
+                                className=" dark:hover:bg-muted/50 dark:border-gray-700 border-b border-gray-200 "
                             >
                                 <TableCell className="font-medium text-slate-900 ">{product.name}</TableCell>
                                 <TableCell>{product.product_line}</TableCell>
@@ -57,7 +57,7 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                                 <TableCell className="text-center">
                                     <Link href={`/products/${product.id}`}>
                                         <Button variant="ghost" size="icon">
-                                            <FileText className="h-4 w-4 text-slate-500 hover:text-blue-600" />
+                                            <FileText className="h-4 w-4 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" />
                                         </Button>
                                     </Link>
                                 </TableCell>

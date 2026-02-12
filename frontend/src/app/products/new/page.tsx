@@ -7,7 +7,7 @@ import { ProductForm } from '@/components/shared/product-form';
 
 export default function NewProductPage() {
   return (
-    <div className="w-full px-12 pt-6 bg-white min-h-screen">
+    <div className="w-full px-12 pt-6 min-h-screen bg-white dark:bg-background">
 
       {/* 1. 頁面標題 (帶返回按鈕) */}
 

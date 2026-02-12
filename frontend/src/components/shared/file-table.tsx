@@ -46,7 +46,7 @@ interface ProductFilesFormValues {
 
 export function ProductFiles() {
     // 1. 取得表單 Context
-    const { control, register, watch, setValue } = useFormContext<ProductFilesFormValues>();
+    const { control, register, watch } = useFormContext<ProductFilesFormValues>();
 
     // 2. 狀態管理：當前篩選器
     const [activeFilter, setActiveFilter] = useState("All");
@@ -125,7 +125,7 @@ export function ProductFiles() {
                             if (!isVisible) return null;
 
                             return (
-                                <TableRow key={field.id} className="group hover:bg-slate-50 transition-colors ">
+                                <TableRow key={field.id} className=" transition-colors ">
 
                                     {/* 拖拉把手 (裝飾用，之後可做排序) */}
                                     <TableCell className="py-4">

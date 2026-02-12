@@ -33,7 +33,8 @@ export default async function EditProductPage({ params }: EditProductPageProps) 
 
       {/* 1. Header: 使用 autoBack 自動偵測回上一頁 */}
       <PageHeader
-        title={`Edit Product: ${product.name}`}
+        id={String(product.id)} // 這裡的 ID 是給 Header 顯示用的，實際上 Header 不會用到它，但傳了之後 URL 上會有 ID (例如 Edit Product: VP1655 (ID: 123))
+        title={`${product.name}`}
         autoBack={true}
       />
 

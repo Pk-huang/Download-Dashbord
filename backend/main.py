@@ -119,12 +119,15 @@ def update_product(
 # 刪除產品 (DELETE)
 @app.delete("/products/{product_id}")
 def delete_product(product_id: int, db: Session = Depends(get_db)):
-    db_product = (
-        db.query(models.Product).filter(models.Product.id == product_id).first()
-    )
-    if db_product is None:
+    # 1. 先找有沒有這筆資料
+    product = db.query(models.Product).filter(models.Product.id == product_id).first()
+    
+    # 2. 如果找不到，回傳 404 錯誤
+    if product is None:
         raise HTTPException(status_code=404, detail="Product not found")
-
-    db.delete(db_product)
+    
+    # 3. 刪除並存檔
+    db.delete(product)
     db.commit()
-    return {"ok": True}
+    
+    return {"ok": True, "message": "Product deleted successfully"}
