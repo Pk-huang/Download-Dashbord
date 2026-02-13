@@ -5,9 +5,12 @@ import {
 } from "@/components/ui/table";
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
-import { FileText } from 'lucide-react';
+import { FileText , Trash } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion'; // 1. 引入
+import { deleteProduct } from '@/lib/api'; // 2. 引入刪除 API
+import { string } from 'zod';
+
 
 export interface ProductTableProps {
     data?: any[];
@@ -16,6 +19,23 @@ export interface ProductTableProps {
 export function ProductTable({ data }: ProductTableProps) { // 接收參數
 
 
+    const handleDelete = async (id: string) => {
+        if (!id) return; // 沒有 ID 就不執行刪除
+
+        const confirmed = window.confirm("Are you sure you want to delete this product? This action cannot be undone.");
+        if (!confirmed) return;
+
+        try {
+            await deleteProduct(string().parse(id));
+            // 刪除成功後可以選擇導回列表頁或顯示成功訊息
+            alert("Product deleted successfully.");
+            // 如果有返回連結，則導回去
+         
+        } catch (error) {
+            console.error("Failed to delete product:", error);
+            alert("Failed to delete product. Please try again.");
+        }
+    }
 
 
     return (
@@ -39,7 +59,7 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                             </TableCell>
                         </TableRow>
                     ) : (
-                        data.map((product) => (   
+                        data.map((product) => (
                             <motion.tr
                                 key={product.id}
                                 layout
@@ -60,6 +80,11 @@ export function ProductTable({ data }: ProductTableProps) { // 接收參數
                                             <FileText className="h-4 w-4 text-slate-500 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400" />
                                         </Button>
                                     </Link>
+
+                                    <Button variant="ghost" size="icon" onClick={() => handleDelete(String(product.id))}>
+                                        <Trash className="h-4 w-4 text-slate-500 dark:text-slate-300 hover:text-red-600 dark:hover:text-red-400" />
+                                    </Button>
+
                                 </TableCell>
                             </motion.tr>
                         ))
