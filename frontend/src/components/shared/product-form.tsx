@@ -1,8 +1,8 @@
 // src/components/features/product/product-form.tsx
 'use client';
 
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+// 移除原本的 useState，因為 react-hook-form 已經內建了
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, Folders } from 'lucide-react';
 import { ProductFormValues, productFormSchema } from '@/lib/schemas/product-schema';
@@ -20,18 +20,15 @@ import {
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct, ProductPayload } from '@/lib/api';
 
-
-import { ProductFiles } from '@/components/shared/file-table'; // 這是我們剛剛做好的檔案列表元件
-import { FormProvider } from "react-hook-form"; // 這個是 react-hook-form 提供的 Context Provider，用來讓子元件（例如 ProductFiles）能夠存取表單狀態和方法
-
+import { ProductFiles } from '@/components/shared/file-table'; 
+import { toast } from "sonner"; // ✅ 引入 sonner
 
 interface ProductFormProps {
   initialData?: ProductFormValues;
 }
 
-// 設定預設值
 const defaultValues: Partial<ProductFormValues> = {
-  id: undefined, // 這裡不給預設 ID，因為新增時沒有 ID，編輯時會從 initialData 傳入
+  id: undefined,
   name: "",
   product_line: "",
   series: "",
@@ -40,93 +37,117 @@ const defaultValues: Partial<ProductFormValues> = {
   ],
 };
 
-
-
 export function ProductForm({ initialData }: ProductFormProps) {
-  console.log("Initial Data in Form:", initialData); // 調試用，看看傳進來的資料長什麼樣子
+  const router = useRouter();
+
   const form = useForm<ProductFormValues>({
     resolver: zodResolver(productFormSchema) as any,
     defaultValues: initialData || defaultValues,
     mode: "onChange",
   });
-  console.log(initialData?.id)
 
-  const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-
+  // ✅ 1. 從 formState 取出我們需要的狀態，不用自己寫 useState
+  const { isSubmitting, isDirty, dirtyFields } = form.formState;
 
   async function onSubmit(data: ProductFormValues) {
-    console.log("Form Data to Submit:", data); // 調試用，看看要送出的資料長什麼樣子
     try {
-      setIsSubmitting(true); // 開啟 Loading，避免使用者重複點擊
-
       // 整理要傳給後端的資料格式
       const payload: ProductPayload = {
         name: data.name,
         product_line: data.product_line,
-        series: data.series || "", // 後端如果是 Optional，這裡可以給空字串或 undefined
+        series: data.series || "", 
         files: (data.files || []).map((file, index) => ({
           category: file.category,
           name: file.name,
           link: file.link,
           disabled_countries: file.disabled_countries || [],
-          order: index + 1 // 自動產生排序 1, 2, 3...
+          order: index + 1 
         })),
-        /* Disabled countries needed */
-        modified_date: new Date().toISOString().split('T')[0], // 自動產生今天的日期 (例如 "2024-01-29")
-        modified_by: "Admin" // 這裡暫時寫死，實際應該從使用者登入資訊取得
+        modified_date: new Date().toISOString().split('T')[0],
+        modified_by: "Admin" 
       }
 
-
+      // ✅ 2. 準備進階版 Toast 的「修改清單」文字
+      const fieldNamesMap: Record<string, string> = {
+        name: "Product Name",
+        product_line: "Product Line",
+        series: "Series",
+        files: "Files / Documents",
+      };
+      const modifiedFieldsText = Object.keys(dirtyFields)
+        .map((key) => fieldNamesMap[key] || key)
+        .join(", ");
 
       if (initialData?.id) {
         // --- 編輯模式 (Update) ---
-        // 這裡需要注意：initialData 裡面要有 id。
-        // 如果您的 ProductFormValues Type 沒有 id，可以用 (initialData as any).id 暫時繞過，或修正 Type
         await updateProduct(String(initialData.id), payload);
-        console.log("Product updated successfully");
-        alert("更新成功！");
+        
+        toast.success("Saved Successfully", {
+          description: (
+            <div className="mt-1">
+              <p>Product <strong className="font-bold">"{data.name}"</strong> has been updated.</p>
+              {modifiedFieldsText && (
+                <p className="mt-2 text-sm bg-green-900/20 px-2 py-1 rounded border border-green-800/30">
+                  ✏️ <span className="opacity-80">Modified:</span> {modifiedFieldsText}
+                </p>
+              )}
+            </div>
+          ),
+        });
       } else {
         // --- 新增模式 (Create) ---
         await createProduct(payload);
-        alert("新增成功！");
+        
+        // 新增成功也換成 toast
+        toast.success("Created Successfully", {
+          description: `Product "${data.name}" has been added to the database.`,
+        });
       }
 
-      // 3. 成功後跳轉回列表頁
       router.push('/products');
-      router.refresh(); // 強制重新整理列表頁資料
+      router.refresh(); 
+
     } catch (error) {
       console.error(error);
-      alert("儲存失敗，請檢查後端連線");
-    } finally {
-      setIsSubmitting(false); // 關閉 Loading
-    }
+      // ✅ 3. 錯誤訊息換成 toast.error
+      toast.error("Error", {
+        description: "Failed to save product. Please check your connection.",
+      });
+    } 
+    // isSubmitting 會由 react-hook-form 自動控制，所以我們不需要 finally
   }
 
   const onError = (errors: any) => {
-    console.log("❌ 表單驗證失敗 (Validation Errors):", errors);
-    alert("表單有欄位未填寫正確，請檢查 Console Log");
+    // ✅ 4. 表單驗證錯誤也換成 toast
+    toast.error("Validation Error", {
+      description: "Please check the highlighted fields and try again.",
+    });
   };
-
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit, onError )} className="space-y-8  ">
+      <form onSubmit={form.handleSubmit(onSubmit, onError)} className="space-y-8">
 
         {/* --- 1. 基本資料區域 --- */}
         <div className="space-y-4">
-
-
           <div className="grid grid-cols-1 gap-6">
+            
             {/* Product Name */}
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-
-                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Product Name</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+                    Product Name
+                    {/* ✅ 5. 加上修改提示標籤 */}
+                    {dirtyFields.name && (
+                      <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
+                        * Edited
+                      </span>
+                    )}
+                  </label>
                   <FormControl className='px-6'>
                     <Input placeholder="e.g. VP1655" {...field} />
                   </FormControl>
@@ -141,7 +162,15 @@ export function ProductForm({ initialData }: ProductFormProps) {
               name="product_line"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Product Line</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+                    Product Line
+                    {dirtyFields.product_line && (
+                      <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
+                        * Edited
+                      </span>
+                    )}
+                  </label>
                   <Select onValueChange={field.onChange} defaultValue={field.value} >
                     <FormControl className='w-full px-6'>
                       <SelectTrigger>
@@ -165,7 +194,15 @@ export function ProductForm({ initialData }: ProductFormProps) {
               name="series"
               render={({ field }) => (
                 <FormItem>
-                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> Series (Optional)</label>
+                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+                    Series (Optional)
+                    {dirtyFields.series && (
+                      <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
+                        * Edited
+                      </span>
+                    )}
+                  </label>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl className='w-full px-6'>
                       <SelectTrigger>
@@ -186,19 +223,25 @@ export function ProductForm({ initialData }: ProductFormProps) {
 
         {/* --- 2. 檔案列表區域 (動態表格) --- */}
         <div className="space-y-4">
-          <p className="text-base font-medium text-slate-700 dark:text-slate-300 pb-2 flex items-center gap-2"><Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> File upload and setting</p>
-
+          <p className="text-base font-medium text-slate-700 dark:text-slate-300 pb-2 flex items-center gap-2">
+            <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+            File upload and setting
+            {dirtyFields.files && (
+              <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
+                * Edited
+              </span>
+            )}
+          </p>
           <ProductFiles />
-
         </div>
 
         {/* --- 底部按鈕區 --- */}
         <div className="flex justify-end gap-4 pt-4">
-          {/* <Button type="button" variant="outline">Cancel</Button> */}
           <Button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white min-w-[120px]"
-            disabled={isSubmitting} // 送出中禁止點擊
+            // ✅ 6. 防呆機制：如果沒有修改 (且是編輯模式)，或者正在送出，就反灰按鈕
+            disabled={(initialData && !isDirty) || isSubmitting} 
           >
             {isSubmitting ? (
               "Saving..."
