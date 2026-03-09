@@ -1,26 +1,4 @@
-// src/lib/api.ts
-
-import { ur } from "zod/locales";
-
-// 判斷現在是在「瀏覽器(Client)」還是在「Docker容器(Server)」
-const isServer = typeof window === 'undefined';
-
-// 如果是 Server 端 (Docker內)，要連到 "http://backend:8000" (容器名稱)
-// 如果是 Client 端 (瀏覽器)，要連到 "http://localhost:8000" (您的本機)
-const API_URL = isServer
-    ? "http://backend:8000"  // Docker 內部互連
-    : (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000");
-
-// ... 下面的 fetch 程式碼不用改
-
-export interface FileItemPayload {
-    category: string;
-    name: string;
-    link: string;
-    disabled_countries: string[];
-    order?: number; // 
-}
-
+import { API_URL , PaginatedResponse,FileItemPayload  } from '@/lib/api/config'; // 引入 API_URL 和型別
 
 export interface ProductPayload {
     name: string,
@@ -32,18 +10,8 @@ export interface ProductPayload {
 }
 
 
-
 /* 取得資料 */
-export interface PaginatedResponse<T> {
-    data: T[];
-    total: number;
-    page: number;
-    limit: number;
-}
-
-
 export async function fetchProducts(query?: string, page: number = 1) {
-
     const url = new URL(`${API_URL}/products`);
     if (query) url.searchParams.set('name', query); // 拼接到後端網址
 
@@ -82,6 +50,7 @@ export async function createProduct(data: ProductPayload) {
     return response.json();
 }
 
+/* 更新產品 */
 export async function updateProduct(id: string, data: ProductPayload) {
     const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'PUT',
@@ -96,7 +65,7 @@ export async function updateProduct(id: string, data: ProductPayload) {
     return response.json();
 }
 
-
+/* 刪除產品 */
 export async function deleteProduct(id: string) {
     const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'DELETE',

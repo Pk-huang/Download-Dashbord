@@ -4,13 +4,13 @@ import { Plus } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 import { PageHeader } from '@/components/shared/page-header';
-import { ProductTable } from '@/components/features/product/product-table';
+import { GroupTable } from '@/components/features/group/group-table';
 import { SearchBar } from '@/components/features/product/searchl-bar';
 import { PageNav } from '@/components/shared/paginav';
 
 import { fetchProducts } from '@/lib/api/product'; // 引入真實 API
 
-interface ProductListPageProps {
+interface GroupListPageProps {
   // 可以在這裡定義接收的 props 型別
   searchParams?: {
     query?: string;
@@ -18,14 +18,13 @@ interface ProductListPageProps {
   };
 }
 
-export default async function ProductListPage({ searchParams }: ProductListPageProps) {
+export default async function GroupListPage({ searchParams }: GroupListPageProps) {
   const params = await searchParams;
   const query = params?.query || '';
 
 
   const currentPage = Number(params?.page) || 1;
 
-  console.log('Current Page:', currentPage);
   const response = await fetchProducts(query, currentPage); // 呼叫 API，傳入 query 和 page
 
   return (
@@ -34,17 +33,17 @@ export default async function ProductListPage({ searchParams }: ProductListPageP
       {/* 1. 使用共用的 PageHeader */}
       <div className="flex items-center justify-between mb-6">
         <PageHeader
-          title="Product List"
+          title="Group List"
           icon="file"
-          subtitle='Product Page'
+          subtitle='Group Page'
         />
       </div>
 
       <div className="flex justify-end mb-7">
-        <Link href="/products/new">
+        <Link href="/groups/new">
           <Button variant="vsbds_sky" size="vsbds_size">
             <Plus />
-            新增產品
+            新建群組
           </Button>
         </Link>
       </div>
@@ -53,7 +52,7 @@ export default async function ProductListPage({ searchParams }: ProductListPageP
 
       {/* 3. 表格區域 (Table 比較特殊，通常直接放，或是之後也可以包成 DataTable) */}
       <div className='rounded-md overflow-hidden'>
-        <ProductTable data={response.data} />
+        <GroupTable data={response.data} />
       </div>
 
       <PageNav totalCount={response.total }   />

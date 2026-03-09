@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 
 import { useRouter } from 'next/navigation';
-import { createProduct, updateProduct, ProductPayload } from '@/lib/api';
+import { createProduct, updateProduct, ProductPayload } from '@/lib/api/product';
 
 import { ProductFiles } from '@/components/shared/file-table'; 
 import { toast } from "sonner"; // ✅ 引入 sonner

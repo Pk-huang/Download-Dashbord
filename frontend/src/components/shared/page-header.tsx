@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import { FileText } from 'lucide-react';
 import { ModeToggle } from '@/components/shared/mode-toggle'; // 2. 
-import { deleteProduct } from '@/lib/api';
+import { deleteProduct } from '@/lib/api/product';
 import { string } from 'zod';
 
 

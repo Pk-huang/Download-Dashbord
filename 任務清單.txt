@@ -7,3 +7,4 @@
 
 下一階段 開始建立群組公能 
 
+3/9 需修該後端對post 給 product 的格式 只要給予  table 的內容就好 不需要給予 group , file

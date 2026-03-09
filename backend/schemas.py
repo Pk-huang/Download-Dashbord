@@ -54,6 +54,18 @@ class Product(ProductCreate):
 
 # --- Group 相關 Schema (本次新增) ---
 
+
+# --- Group 列表專用 Schema (輕量版) ---
+class GroupList(BaseModel):
+    id: int
+    name: str
+    source: str
+    modified_by: str
+    modified_date: str
+
+    class Config:
+        from_attributes = True
+
 # 定義「建立群組」時，前端應該傳什麼給我
 class GroupCreate(BaseModel):
     name: str

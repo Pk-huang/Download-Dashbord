@@ -138,7 +138,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
 # ==========================================
 
 # 取得所有群組 (GET)
-@app.get("/groups", response_model=schemas.PaginatedResponse[schemas.Group])
+@app.get("/groups", response_model=schemas.PaginatedResponse[schemas.GroupList])
 def read_groups(
     page: int = 1,
     limit: int = 10,

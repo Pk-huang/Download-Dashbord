@@ -12,33 +12,31 @@ import { deleteProduct } from '@/lib/api/product'; // 2. 引入刪除 API
 import { string } from 'zod';
 
 
-export interface ProductTableProps {
+export interface GroupTableProps {
     data?: any[];
 }
 
-export function ProductTable({ data }: ProductTableProps) { // 接收參數
+export function GroupTable({ data }: GroupTableProps) { // 接收參數
 
 
     const handleDelete = async (id: string) => {
         if (!id) return; // 沒有 ID 就不執行刪除
 
-        const confirmed = window.confirm("Are you sure you want to delete this product? This action cannot be undone.");
+        const confirmed = window.confirm("Are you sure you want to delete this group? This action cannot be undone.");
         if (!confirmed) return;
 
         try {
             await deleteProduct(string().parse(id));
             // 刪除成功後可以選擇導回列表頁或顯示成功訊息
-            console.log("Product deleted successfully.");
+            alert("Group deleted successfully.");
             // 如果有返回連結，則導回去
          
         } catch (error) {
-            console.error("Failed to delete product:", error);
+            console.error("Failed to delete group:", error);
+            alert("Failed to delete group. Please try again.");
         }
     }
 
-
-    console.log('ProductTable received data:', data); // 調試用，看看實際傳入的資料
-    
 
     return (
         <Table className=' table-auto '>
