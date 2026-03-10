@@ -8,7 +8,7 @@ import { GroupTable } from '@/components/features/group/group-table';
 import { SearchBar } from '@/components/features/product/searchl-bar';
 import { PageNav } from '@/components/shared/paginav';
 
-import { fetchProducts } from '@/lib/api/product'; // 引入真實 API
+import { fetchGroups } from '@/lib/api'; // 引入真實 API
 
 interface GroupListPageProps {
   // 可以在這裡定義接收的 props 型別
@@ -25,7 +25,7 @@ export default async function GroupListPage({ searchParams }: GroupListPageProps
 
   const currentPage = Number(params?.page) || 1;
 
-  const response = await fetchProducts(query, currentPage); // 呼叫 API，傳入 query 和 page
+  const response = await fetchGroups(query, currentPage); // 呼叫 API，傳入 query 和 page
 
   return (
     <div className=" w-full px-12 pt-6 min-h-screen">
@@ -55,7 +55,7 @@ export default async function GroupListPage({ searchParams }: GroupListPageProps
         <GroupTable data={response.data} />
       </div>
 
-      <PageNav totalCount={response.total }   />
+      <PageNav totalCount={response.total } />
 
     </div>
   );

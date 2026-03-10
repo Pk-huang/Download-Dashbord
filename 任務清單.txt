@@ -8,3 +8,12 @@
 下一階段 開始建立群組公能 
 
 3/9 需修該後端對post 給 product 的格式 只要給予  table 的內容就好 不需要給予 group , file
+
+Technical Document 
+ BU 建立 >> dc 歸檔 >> web 拉 dropbox >> 顯示於畫面 -- 上傳動作
+
+ BU 建立 >> dc 歸檔 >> 顯示於畫面 --- 對於試用者的狀況
+
+
+ 1. 控制 拉取的 permission 應該要給 dc ??
+ 2. Technical Document 全部都來自 dc 來自一組 dropbox?

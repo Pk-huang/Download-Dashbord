@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { id } from "zod/locales";
+
 
 export const productFormSchema = z.object({
   id: z.number().optional(),

@@ -8,6 +8,9 @@ from sqlalchemy import desc # 1. 記得引入 desc (descending)
 import models
 import schemas
 from database import engine, get_db
+from datetime import datetime
+
+current_date = datetime.now().strftime("%Y-%m-%d")
 
 # --- 1. 初始化資料庫 ---
 # 這行指令很重要：它會去檢查資料庫檔案在不在，不在的話就依照 models.py 自動建立表格
@@ -165,7 +168,7 @@ def create_group(group: schemas.GroupCreate, db: Session = Depends(get_db)):
         name=group.name,
         source="personal", 
         modified_by="Admin", # 實務上這裡未來會接登入者的名字
-        modified_date=group.modified_date
+        modified_date=current_date
     )
 
     # 2. 處理關聯的產品 (核心魔法 ✨)
@@ -211,7 +214,7 @@ def update_group(
 
     # 2. 更新基本欄位
     db_group.name = group_update.name
-    db_group.modified_date = group_update.modified_date
+    db_group.modified_date = current_date
     db_group.modified_by = "Admin"
 
     # 3. 更新產品關聯 (直接用新的覆蓋舊的，SQLAlchemy 會聰明地處理差異)
