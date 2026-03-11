@@ -123,7 +123,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
                             onClick={toggleAll}
                             className={cn(
                                 "min-w-[120px]",
-                                isAllDisabled && "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                                isAllDisabled && " text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
                             )}
                         >
                             ALL Country
@@ -150,7 +150,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
                                         className={cn(
 
                                             isRegionAllSelected
-                                                ? "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                                                ? " text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
                                                 : "border-slate-400"
                                         )}
                                     >
@@ -168,7 +168,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
                                                 onClick={() => toggleCountry(code)}
                                                 className={cn(
 
-                                                    active && "bg-slate-900 text-white hover:bg-slate-800 hover:text-white"
+                                                    active && " text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
                                                 )}
                                             >
                                                 {code}
@@ -182,8 +182,8 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
 
                 </div>
 
-                <DialogFooter className="sticky bottom-0 bg-white pt-2 border-t">
-                    <Button onClick={handleConfirm} className="w-full sm:w-auto bg-slate-900 text-white">
+                <DialogFooter className="sticky bottom-0 pt-2 border-t">
+                    <Button onClick={handleConfirm} className="w-full sm:w-auto dark:bg-slate-700 dark:hover:bg-slate-600 text-white">
                         回到上傳選項 (儲存設定)
                     </Button>
                 </DialogFooter>
