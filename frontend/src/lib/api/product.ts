@@ -10,7 +10,7 @@ export interface ProductPayload {
 }
 
 
-/* 取得資料 */
+/*/* 取得資料 */
 export async function fetchProducts(query?: string, page: number = 1) {
     const url = new URL(`${API_URL}/products`);
     if (query) url.searchParams.set('name', query); // 拼接到後端網址
@@ -50,7 +50,6 @@ export async function createProduct(data: ProductPayload) {
     return response.json();
 }
 
-/* 更新產品 */
 export async function updateProduct(id: string, data: ProductPayload) {
     const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'PUT',
@@ -65,7 +64,7 @@ export async function updateProduct(id: string, data: ProductPayload) {
     return response.json();
 }
 
-/* 刪除產品 */
+
 export async function deleteProduct(id: string) {
     const response = await fetch(`${API_URL}/products/${id}`, {
         method: 'DELETE',

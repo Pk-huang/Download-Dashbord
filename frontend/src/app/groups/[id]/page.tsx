@@ -40,7 +40,7 @@ export default async function EditGroupPage({ params }: EditGroupPageProps) {
 
       {/* 2. Form: 傳入 initialData，表單會自動填好值 */}
       <div className=" mx-auto">
-        {/* <GroupForm initialData={group} /> */}
+        <GroupForm initialData={group} />
       </div>
 
     </div>

@@ -156,68 +156,9 @@ export function GroupForm({ initialData }: ProductFormProps) {
               )}
             />
 
-            {/* Product Line */}
-            <FormField
-              control={form.control}
-              name="product_line"
-              render={({ field }) => (
-                <FormItem>
-                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
-                    Product Line
-                    {dirtyFields.product_line && (
-                      <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
-                        * Edited
-                      </span>
-                    )}
-                  </label>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} >
-                    <FormControl className='w-full px-6'>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Line" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Monitor">Monitor</SelectItem>
-                      <SelectItem value="IFP">IFP</SelectItem>
-                      <SelectItem value="CDE">CDE</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+         
 
-            {/* Series */}
-            <FormField
-              control={form.control}
-              name="series"
-              render={({ field }) => (
-                <FormItem>
-                  <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
-                    Series (Optional)
-                    {dirtyFields.series && (
-                      <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
-                        * Edited
-                      </span>
-                    )}
-                  </label>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl className='w-full px-6'>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select Series" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="VP Series">VP Series</SelectItem>
-                      <SelectItem value="XG Series">XG Series</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+           
           </div>
         </div>
 
