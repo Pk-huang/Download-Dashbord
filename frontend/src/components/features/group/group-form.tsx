@@ -5,7 +5,7 @@
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Save, Folders } from 'lucide-react';
-import { ProductFormValues, productFormSchema } from '@/lib/schemas/product-schema';
+import { GroupFormValues, groupSchema } from '@/lib/schemas/group-schema';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -18,58 +18,63 @@ import {
 } from '@/components/ui/select';
 
 import { useRouter } from 'next/navigation';
-import { createProduct, updateProduct, ProductPayload } from '@/lib/api/product';
+import { createGroup, updateGroup, GroupPayload } from '@/lib/api/';
 
-import { DownloadsFiles } from '@/components/shared/file-table'; 
+import { DownloadsFiles } from '@/components/shared/file-table';
 import { toast } from "sonner"; // ✅ 引入 sonner
 
-interface ProductFormProps {
-  initialData?: ProductFormValues;
+interface GroupFormProps {
+  initialData?: GroupFormValues;
 }
 
-const defaultValues: Partial<ProductFormValues> = {
+const defaultValues: Partial<GroupFormValues> = {
   id: undefined,
   name: "",
-  product_line: "",
-  series: "",
+  selectedProducts: [], // ✅ 1. 預設值改成空陣列，等使用者選擇產品後才有值
   files: [
     { category: "", name: "", link: "", disabled_countries: [] }
   ],
 };
 
-export function GroupForm({ initialData }: ProductFormProps) {
+export function GroupForm({ initialData }: GroupFormProps) {
   const router = useRouter();
 
-  const form = useForm<ProductFormValues>({
-    resolver: zodResolver(productFormSchema) as any,
-    defaultValues: initialData || defaultValues,
+  const form = useForm<GroupFormValues>({
+    resolver: zodResolver(groupSchema) as any,
+    defaultValues: {
+      ...defaultValues,
+      ...initialData,
+      // 👇 在這裡塞入寫死的測試資料，這才是 Zod 會檢查的東西！
+      selectedProducts: initialData?.selectedProducts || [1, 2],
+    },
     mode: "onChange",
   });
 
   // ✅ 1. 從 formState 取出我們需要的狀態，不用自己寫 useState
   const { isSubmitting, isDirty, dirtyFields } = form.formState;
 
-  async function onSubmit(data: ProductFormValues) {
+  async function onSubmit(data: GroupFormValues) {
     try {
       // 整理要傳給後端的資料格式
-      const payload: ProductPayload = {
+      const payload: GroupPayload = {
         name: data.name,
-        product_line: data.product_line,
-        series: data.series || "", 
+        modified_date: new Date().toISOString().split('T')[0],
+        modified_by: "Admin",
+
+        selectedProducts: data.selectedProducts, // ✅ 2. 送出產品 ID 陣列給後端        
         files: (data.files || []).map((file, index) => ({
           category: file.category,
           name: file.name,
           link: file.link,
           disabled_countries: file.disabled_countries || [],
-          order: index + 1 
+          order: index + 1
         })),
-        modified_date: new Date().toISOString().split('T')[0],
-        modified_by: "Admin" 
+
       }
 
       // ✅ 2. 準備進階版 Toast 的「修改清單」文字
       const fieldNamesMap: Record<string, string> = {
-        name: "Product Name",
+        name: "Group Name",
         product_line: "Product Line",
         series: "Series",
         files: "Files / Documents",
@@ -80,12 +85,12 @@ export function GroupForm({ initialData }: ProductFormProps) {
 
       if (initialData?.id) {
         // --- 編輯模式 (Update) ---
-        await updateProduct(String(initialData.id), payload);
-        
+        await updateGroup(String(initialData.id), payload);
+
         toast.success("Saved Successfully", {
           description: (
             <div className="mt-1">
-              <p>Product <strong className="font-bold">"{data.name}"</strong> has been updated.</p>
+              <p>Group <strong className="font-bold">"{data.name}"</strong> has been updated.</p>
               {modifiedFieldsText && (
                 <p className="mt-2 text-sm bg-green-900/20 px-2 py-1 rounded border border-green-800/30">
                   ✏️ <span className="opacity-80">Modified:</span> {modifiedFieldsText}
@@ -96,33 +101,38 @@ export function GroupForm({ initialData }: ProductFormProps) {
         });
       } else {
         // --- 新增模式 (Create) ---
-        await createProduct(payload);
-        
+        await createGroup(payload);
+
         // 新增成功也換成 toast
         toast.success("Created Successfully", {
-          description: `Product "${data.name}" has been added to the database.`,
+          description: `Group "${data.name}" has been added to the database.`,
         });
       }
 
-      router.push('/products');
-      router.refresh(); 
+      router.push('/groups');
+      router.refresh();
 
     } catch (error) {
       console.error(error);
       // ✅ 3. 錯誤訊息換成 toast.error
       toast.error("Error", {
-        description: "Failed to save product. Please check your connection.",
+        description: "Failed to save group. Please check your connection.",
       });
-    } 
+    }
     // isSubmitting 會由 react-hook-form 自動控制，所以我們不需要 finally
   }
 
-  const onError = (errors: any) => {
-    // ✅ 4. 表單驗證錯誤也換成 toast
-    toast.error("Validation Error", {
-      description: "Please check the highlighted fields and try again.",
+  function onError(errors: any) {
+    console.log("🛑 Zod 驗證失敗的詳細錯誤:", errors);
+
+    // 把第一個錯誤抓出來顯示在畫面上，讓您知道哪裡出錯
+    const firstErrorKey = Object.keys(errors)[0];
+    const firstErrorMessage = errors[firstErrorKey]?.message;
+
+    toast.error("表單驗證失敗", {
+      description: `欄位 [${firstErrorKey}] 發生錯誤：${firstErrorMessage}`,
     });
-  };
+  }
 
   return (
     <FormProvider {...form}>
@@ -131,15 +141,15 @@ export function GroupForm({ initialData }: ProductFormProps) {
         {/* --- 1. 基本資料區域 --- */}
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-6">
-            
-            {/* Product Name */}
+
+            {/* Group Name */}
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
                   <label className="text-base font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
-                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+                    <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' />
                     Product Name
                     {/* ✅ 5. 加上修改提示標籤 */}
                     {dirtyFields.name && (
@@ -156,16 +166,16 @@ export function GroupForm({ initialData }: ProductFormProps) {
               )}
             />
 
-         
 
-           
+
+
           </div>
         </div>
 
         {/* --- 2. 檔案列表區域 (動態表格) --- */}
         <div className="space-y-4">
           <p className="text-base font-medium text-slate-700 dark:text-slate-300 pb-2 flex items-center gap-2">
-            <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' /> 
+            <Folders className='h-4 w-4 text-slate-500 dark:text-slate-300' />
             File upload and setting
             {dirtyFields.files && (
               <span className="text-amber-500 text-xs font-medium bg-amber-50 dark:bg-amber-950/30 px-1.5 rounded ml-2">
@@ -182,7 +192,7 @@ export function GroupForm({ initialData }: ProductFormProps) {
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white min-w-[120px]"
             // ✅ 6. 防呆機制：如果沒有修改 (且是編輯模式)，或者正在送出，就反灰按鈕
-            disabled={(initialData && !isDirty) || isSubmitting} 
+            disabled={(initialData && !isDirty) || isSubmitting}
           >
             {isSubmitting ? (
               "Saving..."

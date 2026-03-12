@@ -4,9 +4,11 @@ import { API_URL, PaginatedResponse, FileItemPayload } from '@/lib/api/config'; 
 // 建立或更新群組時，前端要送出的資料格式
 export interface GroupPayload {
     name: string;
-    modified_date: string;
+    modified_date: string,
+    modified_by: string
     selectedProducts: number[]; // 核心：只要傳 ID 陣列給後端！
     files?: FileItemPayload[];
+
 }
 
 export async function fetchGroups(query?: string, page: number = 1) {

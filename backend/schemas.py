@@ -70,9 +70,9 @@ class GroupCreate(BaseModel):
     name: str
     modified_date: str
     files: List[FileItem] = []
-    product_ids: List[int] = []
+    selected_products: List[int] = []
 
-# 📥 後端傳給前端 (GET 讀取單一筆)：不含 product_ids，只含完整的 products
+# 📥 後端傳給前端 (GET 讀取單一筆)：不含 selected_products，只含完整的 products
 class Group(BaseModel):
     id: int
     name: str

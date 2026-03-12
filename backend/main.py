@@ -4,7 +4,7 @@ from typing import List, Optional
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import desc # 1. 記得引入 desc (descending)
 
-
+import json
 import models
 import schemas
 from database import engine, get_db
@@ -173,14 +173,14 @@ def create_group(group: schemas.GroupCreate, db: Session = Depends(get_db)):
 
     # 2. 處理關聯的產品 (核心魔法 ✨)
     # 前端只傳來 [101, 102]，我們去資料庫把這兩個產品的實體撈出來，直接塞給 db_group.products
-    if group.product_ids:
-        products = db.query(models.Product).filter(models.Product.id.in_(group.product_ids)).all()
+    if group.selected_products:
+        products = db.query(models.Product).filter(models.Product.id.in_(group.selected_products)).all()
         db_group.products = products
 
     # 3. 處理群組的檔案
     if group.files:
         for file_item in group.files:
-            new_file = models.GroupFile(**file_item.model_dump())
+            file_data = file_item.model_dump()
             db_group.files.append(new_file)
 
     # 4. 存檔！SQLAlchemy 會自動幫我們把橋接表、檔案表通通搞定
@@ -218,13 +218,15 @@ def update_group(
     db_group.modified_by = "Admin"
 
     # 3. 更新產品關聯 (直接用新的覆蓋舊的，SQLAlchemy 會聰明地處理差異)
-    new_products = db.query(models.Product).filter(models.Product.id.in_(group_update.product_ids)).all()
+    new_products = db.query(models.Product).filter(models.Product.id.in_(group_update.selected_products)).all()
     db_group.products = new_products
 
     # 4. 更新檔案 (最安全的做法：清掉這個群組舊有的檔案，全部塞新的進去)
     db.query(models.GroupFile).filter(models.GroupFile.group_id == group_id).delete()
     for file_item in group_update.files:
-        new_file = models.GroupFile(**file_item.model_dump())
+        file_data = file_item.model_dump()
+        file_data["disabled_countries"] = json.dumps(file_data.get("disabled_countries", []))
+        new_file = models.GroupFile(**file_data)
         db_group.files.append(new_file)
 
     # 5. 存檔
