@@ -44,7 +44,7 @@ interface ProductFilesFormValues {
 }
 
 
-export function ProductFiles() {
+export function DownloadsFiles() {
     // 1. 取得表單 Context
     const { control, register, watch } = useFormContext<ProductFilesFormValues>();
 

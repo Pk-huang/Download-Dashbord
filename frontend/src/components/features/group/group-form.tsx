@@ -20,7 +20,7 @@ import {
 import { useRouter } from 'next/navigation';
 import { createProduct, updateProduct, ProductPayload } from '@/lib/api/product';
 
-import { ProductFiles } from '@/components/shared/file-table'; 
+import { DownloadsFiles } from '@/components/shared/file-table'; 
 import { toast } from "sonner"; // ✅ 引入 sonner
 
 interface ProductFormProps {
@@ -37,7 +37,7 @@ const defaultValues: Partial<ProductFormValues> = {
   ],
 };
 
-export function ProductForm({ initialData }: ProductFormProps) {
+export function GroupForm({ initialData }: ProductFormProps) {
   const router = useRouter();
 
   const form = useForm<ProductFormValues>({
@@ -232,7 +232,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
               </span>
             )}
           </p>
-          <ProductFiles />
+          <DownloadsFiles />
         </div>
 
         {/* --- 底部按鈕區 --- */}

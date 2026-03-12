@@ -1,11 +1,11 @@
-import { API_URL , PaginatedResponse,FileItemPayload  } from '@/lib/api/config'; // 引入 API_URL 和型別
+import { API_URL, PaginatedResponse, FileItemPayload } from '@/lib/api/config'; // 引入 API_URL 和型別
 
 
 // 建立或更新群組時，前端要送出的資料格式
 export interface GroupPayload {
     name: string;
     modified_date: string;
-    product_ids: number[]; // 核心：只要傳 ID 陣列給後端！
+    selectedProducts: number[]; // 核心：只要傳 ID 陣列給後端！
     files?: FileItemPayload[];
 }
 
