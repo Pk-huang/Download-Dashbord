@@ -150,7 +150,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
                                         className={cn(
 
                                             isRegionAllSelected
-                                                ? " text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
+                                                ? "bg-slate-800 text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
                                                 : "border-slate-400"
                                         )}
                                     >
@@ -168,7 +168,7 @@ export function CountrySelector({ Selectcoutry = [], onChange }: CountrySelector
                                                 onClick={() => toggleCountry(code)}
                                                 className={cn(
 
-                                                    active && " text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
+                                                    active && "bg-slate-800 text-white hover:bg-slate-800 hover:text-white dark:bg-gray-600 dark:hover:bg-slate-600 dark:text-white"
                                                 )}
                                             >
                                                 {code}
